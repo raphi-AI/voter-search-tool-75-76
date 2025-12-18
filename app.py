@@ -1,9 +1,17 @@
 import streamlit as st
 import sqlite3
 import pandas as pd
+import zipfile  # <--- Add this
+import os       # <--- Add this
 
-# --- CONFIGURATION ---
-DB_NAME = 'electoral_data.db'
+# --- AUTO-UNZIP LOGIC ---
+db_file = 'electoral_data.db'
+zip_file = 'electoral_data.zip'
+
+# If the DB doesn't exist but the ZIP does, extract it
+if not os.path.exists(db_file) and os.path.exists(zip_file):
+    with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+        zip_ref.extractall('.')
 
 def get_data(names_list):
     conn = sqlite3.connect(DB_NAME)
@@ -65,4 +73,5 @@ if submitted and text_input:
         else:
             st.warning("No matches found.")
     else:
+
         st.error("Please enter at least one name.")
